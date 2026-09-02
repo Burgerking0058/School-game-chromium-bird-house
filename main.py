@@ -55,6 +55,7 @@ def menuloop():
             
     else:
         if not prevScr == 3:#page 3 init
+            canvas.delete("map")
             #change buttons to show what screen is up
             mapB1.config(bg="grey", fg="black")
             mapB2.config(bg="grey", fg="black")
@@ -77,7 +78,8 @@ def recon(x, y, dir):
 
 def testClick(event):
     print(f"{event.x}, {event.y}")
-    recon(event.x, event.y, 45)
+    if screen == 1:
+        recon(event.x, event.y, 45)
 
 
 
