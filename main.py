@@ -1,6 +1,7 @@
 import tkinter as tk
 import math as m
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageDraw
+import random
 global screen
 screen = 1
 global prevScr
@@ -67,19 +68,28 @@ def menuloop():
     prevScr = screen
     root.after(10, menuloop)
 
-def recon(x, y, dir):
+def recon(ix, iy, dir):
+
     global map_1
-    section = fullMap
-    section = section.crop((-50+x,-50+y,50+x,50+y))
-    blankMap.paste(section, (x,y))
+
+    section = fullMap.convert("RGBA")
+    section = section.crop((-150+ix,-150+iy,150+ix,150+iy))
+
+    poly = Image.new("RGBA", (300, 300), color=(0,0,0,0))
+    poly2 = ImageDraw.Draw(poly)
+
+
+    mask = poly2.split()[1]
+
+    blankMap.paste(section, (ix,iy), mask=mask)
     map_1 = ImageTk.PhotoImage(blankMap)
     mapdisplay = canvas.create_image(mapOffset[0],mapOffset[1],image=map_1, tags="map")#map display
-    #canvas.itemconfigure(mapdisplay, image=map_1)
+
 
 def testClick(event):
     print(f"{event.x}, {event.y}")
     if screen == 1:
-        recon(event.x, event.y, 45)
+        recon(event.x, event.y, random.randint(-90,90))
 
 
 
@@ -130,7 +140,7 @@ fullMap = Image.open("Map1.png")
 pixel = tk.PhotoImage(width=1, height=1)#invisible pixel for button sizing i guess
 
 #map displays
-blankMap = Image.new("RGBA", (1920, 1080))
+blankMap = Image.new("RGBA", (1920, 1080), color=(0,0,0,0))
 
 map_1 = ImageTk.PhotoImage(blankMap)
 
