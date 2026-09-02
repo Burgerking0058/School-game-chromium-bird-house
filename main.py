@@ -8,6 +8,10 @@ prevScr = 0
 global directivesLn
 directivesLn = -1
 global lines
+global mapOffset
+mapOffset = (960, 575)
+
+
 
 
 def labelledBox(x, y, w, h, fill, stroke, text, tag):
@@ -18,6 +22,7 @@ def nextMission():
     global directivesLn
     global lines
     directivesLn +=1
+    directivesBox.insert("end", "---------------------------------------------------------------------\n")
     while(lines[directivesLn].strip()):
         directivesBox.insert("end", lines[directivesLn])
         print(lines[directivesLn])
@@ -30,7 +35,7 @@ def menuloop():
         if not prevScr == 1: #page 1 init
             
 
-            mapdisplay = canvas.create_image(960,570,image=map_1, tags="map")#map display
+            mapdisplay = canvas.create_image(mapOffset[0],mapOffset[1],image=map_1, tags="map")#map display
             #change buttons to show what screen is up
             mapB1.config(bg="green", fg="black")
             mapB2.config(bg="grey", fg="black")
@@ -61,6 +66,18 @@ def menuloop():
     prevScr = screen
     root.after(10, menuloop)
 
+def recon(x, y, dir):
+    global map_1
+    section = fullMap
+    section = section.crop((-50+x,-50+y,50+x,50+y))
+    blankMap.paste(section, (x,y))
+    map_1 = ImageTk.PhotoImage(blankMap)
+    mapdisplay = canvas.create_image(mapOffset[0],mapOffset[1],image=map_1, tags="map")#map display
+    #canvas.itemconfigure(mapdisplay, image=map_1)
+
+def testClick(event):
+    print(f"{event.x}, {event.y}")
+    recon(event.x, event.y, 45)
 
 
 
@@ -101,12 +118,21 @@ root.bind("<Escape>", kill)
 root.bind("<Left>", larrow)
 root.bind("<Right>", rarrow)
 
+canvas.bind("<Button-1>", testClick)
 
 #images
-pilImage = Image.open("Map1.png")
-map_1 = ImageTk.PhotoImage(pilImage)
+fullMap = Image.open("Map1.png")
+#map_1 = ImageTk.PhotoImage(fullMap)
+
 
 pixel = tk.PhotoImage(width=1, height=1)#invisible pixel for button sizing i guess
+
+#map displays
+blankMap = Image.new("RGBA", (1920, 1080))
+
+map_1 = ImageTk.PhotoImage(blankMap)
+
+
 
 #buttons for screen change
 mapB1 = tk.Button(root, text="Map", width=300, height=140, image=pixel,compound="left", command=bone)
