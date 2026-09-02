@@ -68,20 +68,37 @@ def menuloop():
     prevScr = screen
     root.after(10, menuloop)
 
+def rotatePolygon(angleDeg, points, offx, offy):
+    points2 = [list(point) for point in points]
+    dirRad = m.radians(angleDeg)
+    cos = m.cos(dirRad)
+    sin = m.sin(dirRad)
+    for i in range(len(points2)):
+        print(i)
+        points2[i][0], points2[i][1] = int(points2[i][0]*cos - points2[i][1]*sin+offx), int(points2[i][0]*sin + points2[i][1]*cos+offy)
+        
+    return(points2)
+
+
 def recon(ix, iy, dir):
 
     global map_1
 
     section = fullMap.convert("RGBA")
-    section = section.crop((-150+ix,-150+iy,150+ix,150+iy))
+    section = section.crop((ix,iy,300+ix,300+iy))
 
     poly = Image.new("RGBA", (300, 300), color=(0,0,0,0))
     poly2 = ImageDraw.Draw(poly)
 
+    points = ((-50,100),(50,100),(50,-100),(-50,-100))
+    pointsR = rotatePolygon(dir, points, 200,200)
+    print(pointsR)
+    poly2.polygon(pointsR, fill="orange")
 
-    mask = poly2.split()[1]
-
+    mask = poly.split()[3]
+    #mask = mask.resize(section.size)
     blankMap.paste(section, (ix,iy), mask=mask)
+    #blankMap.paste(mask, (ix,iy) )
     map_1 = ImageTk.PhotoImage(blankMap)
     mapdisplay = canvas.create_image(mapOffset[0],mapOffset[1],image=map_1, tags="map")#map display
 
