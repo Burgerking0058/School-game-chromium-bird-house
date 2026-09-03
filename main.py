@@ -2,6 +2,8 @@ import tkinter as tk
 import math as m
 from PIL import Image, ImageTk, ImageDraw
 import random
+from tkdial import *
+
 global screen
 screen = 1
 global prevScr
@@ -11,9 +13,6 @@ directivesLn = -1
 global lines
 global mapOffset
 mapOffset = (960, 575)
-
-
-
 
 def labelledBox(x, y, w, h, fill, stroke, text, tag):
     canvas.create_rectangle(x-w/2, y-h/2, x+w/2, y+h/2, fill=fill, tags=tag)
@@ -43,6 +42,7 @@ def menuloop():
             mapB3.config(bg="grey", fg="black")
 
             canvas.itemconfigure(directivesBoxWindow, state="hidden")
+            canvas.itemconfigure(crankE, state="hidden")
 
     elif screen == 2:
         if not prevScr == 2:#page 2 init
@@ -53,7 +53,9 @@ def menuloop():
             mapB3.config(bg="grey", fg="black")
 
             canvas.itemconfigure(directivesBoxWindow, state="normal")
-            
+            canvas.itemconfigure(crankE, state="hidden")
+
+
     else:
         if not prevScr == 3:#page 3 init
             canvas.delete("map")
@@ -63,7 +65,7 @@ def menuloop():
             mapB3.config(bg="green", fg="black")
 
             canvas.itemconfigure(directivesBoxWindow, state="hidden")
-
+            canvas.itemconfigure(crankE, state="normal")
 
     prevScr = screen
     root.after(10, menuloop)
@@ -169,11 +171,15 @@ mapB2 = tk.Button(root, text="Directives", width=300, height=140, image=pixel,co
 mapB3 = tk.Button(root, text="Breach", width=300, height=140, image=pixel,compound="left", command=bthree)
 directivesBox = tk.Text(root, width=70, height=50)
 
+knobE = ImageKnob(root, image="handle.png", text_color="white", text="Elevation ", start_angle=0, end_angle=-720, scroll_steps=1, bg="black", radius=400)
+
+
 
 #summoning screen change buttons at start
 canvas.create_window(550, 80, window=mapB1)
 canvas.create_window(960, 80, window=mapB2)
 canvas.create_window(1370, 80, window=mapB3)
+crankE = canvas.create_window(1000, 500, window=knobE)
 #directives
 directivesBoxWindow = canvas.create_window(450, 550, window=directivesBox)
 
