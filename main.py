@@ -3,6 +3,7 @@ import math as m
 from PIL import Image, ImageTk, ImageDraw
 import random
 from tkdial import *
+import time
 
 global screen
 screen = 1
@@ -22,15 +23,16 @@ def labelledBox(x, y, w, h, fill, stroke, text, tag):
     canvas.create_rectangle(x-w/2, y-h/2, x+w/2, y+h/2, fill=fill, tags=tag)
     canvas.create_text(x,y, fill=stroke, text=text, tags=tag)
 
-def nextMission():
+def nextMission():#plays next set of directives I think(haven't properly tested this yet)
     global directivesLn
     global lines
     directivesLn +=1
     directivesBox.insert("end", "---------------------------------------------------------------------\n")
     while(lines[directivesLn].strip()):
+        time.sleep(2)
         directivesBox.insert("end", lines[directivesLn])
-        print(lines[directivesLn])
         directivesLn += 1
+
 
 
 def menuloop():
@@ -46,7 +48,7 @@ def menuloop():
             mapB2.config(bg="grey", fg="black")
             mapB3.config(bg="grey", fg="black")
 
-            canvas.itemconfigure(directivesBoxWindow, state="hidden")
+            canvas.itemconfigure(directivesBoxWindow, state="hidden")#change what windows are visible
             canvas.itemconfigure(crankE, state="hidden")
             canvas.itemconfigure(crankA, state="hidden")
 
@@ -58,7 +60,7 @@ def menuloop():
             mapB2.config(bg="green", fg="black")
             mapB3.config(bg="grey", fg="black")
 
-            canvas.itemconfigure(directivesBoxWindow, state="normal")
+            canvas.itemconfigure(directivesBoxWindow, state="normal")#change what windows are visible
             canvas.itemconfigure(crankE, state="hidden")
             canvas.itemconfigure(crankA, state="hidden")
 
@@ -71,7 +73,7 @@ def menuloop():
             mapB2.config(bg="grey", fg="black")
             mapB3.config(bg="green", fg="black")
 
-            canvas.itemconfigure(directivesBoxWindow, state="hidden")
+            canvas.itemconfigure(directivesBoxWindow, state="hidden")#change what windows are visible
             canvas.itemconfigure(crankE, state="normal")
             canvas.itemconfigure(crankA, state="normal")
 
@@ -84,13 +86,12 @@ def menuloop():
     prevScr = screen
     root.after(10, menuloop)
 
-def rotatePolygon(angleDeg, points, offx, offy):
+def rotatePolygon(angleDeg, points, offx, offy):#func to rotate a liste of points for drawing stuff at an angle
     points2 = [list(point) for point in points]
     dirRad = m.radians(angleDeg)
     cos = m.cos(dirRad)
     sin = m.sin(dirRad)
     for i in range(len(points2)):
-        print(i)
         points2[i][0], points2[i][1] = int(points2[i][0]*cos - points2[i][1]*sin+offx), int(points2[i][0]*sin + points2[i][1]*cos+offy)
         
     return(points2)
@@ -140,6 +141,8 @@ def bone():
 def btwo():
     global screen
     screen = 2
+    nextMission()
+    
 def bthree():
     global screen
     screen = 3
