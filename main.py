@@ -43,6 +43,7 @@ def menuloop():
 
             canvas.itemconfigure(directivesBoxWindow, state="hidden")
             canvas.itemconfigure(crankE, state="hidden")
+            canvas.itemconfigure(crankA, state="hidden")
 
     elif screen == 2:
         if not prevScr == 2:#page 2 init
@@ -54,6 +55,7 @@ def menuloop():
 
             canvas.itemconfigure(directivesBoxWindow, state="normal")
             canvas.itemconfigure(crankE, state="hidden")
+            canvas.itemconfigure(crankA, state="hidden")
 
 
     else:
@@ -66,6 +68,7 @@ def menuloop():
 
             canvas.itemconfigure(directivesBoxWindow, state="hidden")
             canvas.itemconfigure(crankE, state="normal")
+            canvas.itemconfigure(crankA, state="normal")
 
     prevScr = screen
     root.after(10, menuloop)
@@ -151,6 +154,11 @@ root.bind("<Right>", rarrow)
 
 canvas.bind("<Button-1>", testClick)
 
+def updateDial(dial, text):
+    dial.configure(text=f"{text}{dial.get()/10}°")
+
+
+
 #images
 fullMap = Image.open("Map1.png")
 #map_1 = ImageTk.PhotoImage(fullMap)
@@ -163,23 +171,24 @@ blankMap = Image.new("RGBA", (1920, 1080), color=(0,0,0,0))
 
 map_1 = ImageTk.PhotoImage(blankMap)
 
-
-
 #buttons for screen change
 mapB1 = tk.Button(root, text="Map", width=300, height=140, image=pixel,compound="left", command=bone)
 mapB2 = tk.Button(root, text="Directives", width=300, height=140, image=pixel,compound="left", command=btwo)
 mapB3 = tk.Button(root, text="Breach", width=300, height=140, image=pixel,compound="left", command=bthree)
 directivesBox = tk.Text(root, width=70, height=50)
 
-knobE = ImageKnob(root, image="handle.png", text_color="white", text="Elevation ", start_angle=0, end_angle=-720, scroll_steps=1, bg="black", radius=400)
-
+knobE = ImageKnob(root, image="handle.png", text_color="white",end=600, text="Elevation ", bg="black", start_angle=0,scale_width=70, end_angle=-7200, scroll_steps=1, radius=200, command=lambda: updateDial(knobE, "Elevation: "))
+knobA = ImageKnob(root, image="handle.png", text_color="white",start=-600, end=600, text="Azimuth ", bg="black", start_angle=7200,scale_width=70, end_angle=-7200, scroll_steps=1, radius=200, command=lambda: updateDial(knobE, "Elevation: "))
 
 
 #summoning screen change buttons at start
 canvas.create_window(550, 80, window=mapB1)
 canvas.create_window(960, 80, window=mapB2)
 canvas.create_window(1370, 80, window=mapB3)
+
+#cranks
 crankE = canvas.create_window(1000, 500, window=knobE)
+crankA = canvas.create_window(1400, 800, window=knobA)
 #directives
 directivesBoxWindow = canvas.create_window(450, 550, window=directivesBox)
 
