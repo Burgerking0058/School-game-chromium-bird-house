@@ -14,6 +14,10 @@ global lines
 global mapOffset
 mapOffset = (960, 575)
 
+
+
+
+
 def labelledBox(x, y, w, h, fill, stroke, text, tag):
     canvas.create_rectangle(x-w/2, y-h/2, x+w/2, y+h/2, fill=fill, tags=tag)
     canvas.create_text(x,y, fill=stroke, text=text, tags=tag)
@@ -31,6 +35,7 @@ def nextMission():
 
 def menuloop():
     global prevScr
+    canvas.delete("gun")
     if screen ==1:
         if not prevScr == 1: #page 1 init
             
@@ -70,6 +75,12 @@ def menuloop():
             canvas.itemconfigure(crankE, state="normal")
             canvas.itemconfigure(crankA, state="normal")
 
+        #draw gun stuff
+        gunPoints = ((-400,80),(-400,-80),(200,-80),(600,-50),(600,50),(200,80))#barrel points relative to turning point
+        canvas.create_arc((1300, 000, 1900, 600,), fill="grey30", start=(knobE.get()/10)+220, extent=90, tags="gun")#trunion ring gear
+        canvas.create_polygon(rotatePolygon((knobE.get()/-10),gunPoints, 1600, 300), fill="grey", tags="gun")#rotating barrel/chamber
+        canvas.create_polygon(((0,800),(0,1000),(1920,1000),(1920,800),(1920,500),(1700,500),(1500,800)), fill="grey38", tags="gun")#elevation mechanism mount
+        canvas.create_oval(1560,260, 1640,340, fill="grey30", tags="gun", outline="grey30")#circle
     prevScr = screen
     root.after(10, menuloop)
 
@@ -97,7 +108,6 @@ def recon(ix, iy, dir):
 
     points = ((-50,100),(50,100),(50,-100),(-50,-100))
     pointsR = rotatePolygon(dir, points, 200,200)
-    print(pointsR)
     poly2.polygon(pointsR, fill="orange")
 
     mask = poly.split()[3]
@@ -177,9 +187,9 @@ mapB2 = tk.Button(root, text="Directives", width=300, height=140, image=pixel,co
 mapB3 = tk.Button(root, text="Breach", width=300, height=140, image=pixel,compound="left", command=bthree)
 directivesBox = tk.Text(root, width=70, height=50)
 
-knobE = ImageKnob(root, image="handle.png", text_color="white",end=600, text="Elevation ", bg="black", start_angle=0,scale_width=70, end_angle=-7200, scroll_steps=1, radius=200, command=lambda: updateDial(knobE, "Elevation: "))
-knobA = ImageKnob(root, image="handle.png", text_color="white",start=-600, end=600, text="Azimuth ", bg="black", start_angle=7200,scale_width=70, end_angle=-7200, scroll_steps=1, radius=200, command=lambda: updateDial(knobE, "Elevation: "))
-
+knobE = ImageKnob(root, image="handle.png", text_color="white",end=600, text="Elevation ", bg="grey38", start_angle=0,scale_width=70, end_angle=-7200, scroll_steps=1, radius=200, command=lambda: updateDial(knobE, "Elevation: "))
+knobA = ImageKnob(root, image="handle.png", text_color="white",start=-600, end=600, text="Azimuth ", bg="grey38", start_angle=18000,scale_width=70, end_angle=-18000, scroll_steps=1, radius=200, command=lambda: updateDial(knobA, "Azimuth: "))
+knobA.set(0)
 
 #summoning screen change buttons at start
 canvas.create_window(550, 80, window=mapB1)
@@ -187,8 +197,8 @@ canvas.create_window(960, 80, window=mapB2)
 canvas.create_window(1370, 80, window=mapB3)
 
 #cranks
-crankE = canvas.create_window(1000, 500, window=knobE)
-crankA = canvas.create_window(1400, 800, window=knobA)
+crankE = canvas.create_window(1800, 600, window=knobE)
+crankA = canvas.create_window(1700, 800, window=knobA)
 #directives
 directivesBoxWindow = canvas.create_window(450, 550, window=directivesBox)
 
