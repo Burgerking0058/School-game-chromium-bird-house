@@ -29,7 +29,6 @@ def nextMission():#plays next set of directives I think(haven't properly tested 
     directivesLn +=1
     directivesBox.insert("end", "---------------------------------------------------------------------\n")
     while(lines[directivesLn].strip()):
-        time.sleep(2)
         directivesBox.insert("end", lines[directivesLn])
         directivesLn += 1
 
@@ -98,7 +97,8 @@ def rotatePolygon(angleDeg, points, offx, offy):#func to rotate a liste of point
 
 
 def recon(ix, iy, dir):
-
+    ix = ix - 210
+    iy = iy-210
     global map_1
 
     section = fullMap.convert("RGBA")
@@ -123,6 +123,11 @@ def testClick(event):
     print(f"{event.x}, {event.y}")
     if screen == 1:
         recon(event.x, event.y, random.randint(-90,90))
+
+def shoot():
+    pass
+
+
 
 
 
@@ -173,7 +178,7 @@ def updateDial(dial, text):
 
 
 #images
-fullMap = Image.open("Map1.png")
+fullMap = Image.open("map1 (2).png")
 #map_1 = ImageTk.PhotoImage(fullMap)
 
 
@@ -185,10 +190,14 @@ blankMap = Image.new("RGBA", (1920, 1080), color=(0,0,0,0))
 map_1 = ImageTk.PhotoImage(blankMap)
 
 #buttons for screen change
-mapB1 = tk.Button(root, text="Map", width=300, height=140, image=pixel,compound="left", command=bone)
-mapB2 = tk.Button(root, text="Directives", width=300, height=140, image=pixel,compound="left", command=btwo)
-mapB3 = tk.Button(root, text="Breach", width=300, height=140, image=pixel,compound="left", command=bthree)
+mapB1 = tk.Button(root, text="Map", width=300, height=140, image=pixel,compound="left", command=bone, font=("arial", 40, "bold"))
+mapB2 = tk.Button(root, text="Directives", width=300, height=140, image=pixel,compound="left", command=btwo, font=("arial", 40, "bold"))
+mapB3 = tk.Button(root, text="Breach", width=300, height=140, image=pixel,compound="left", command=bthree, font=("arial", 40, "bold"))
+#other ones
 directivesBox = tk.Text(root, width=70, height=50)
+shootB = tk.Button(root, text="Fire", width=300, height=140, image=pixel,compound="left", command=shoot, bg="red", font=("arial", 40, "bold"))
+
+
 
 knobE = ImageKnob(root, image="handle.png", text_color="white",end=600, text="Elevation ", bg="grey38", start_angle=0,scale_width=70, end_angle=-7200, scroll_steps=1, radius=200, command=lambda: updateDial(knobE, "Elevation: "))
 knobA = ImageKnob(root, image="handle.png", text_color="white",start=-600, end=600, text="Azimuth ", bg="grey38", start_angle=18000,scale_width=70, end_angle=-18000, scroll_steps=1, radius=200, command=lambda: updateDial(knobA, "Azimuth: "))
@@ -199,9 +208,11 @@ canvas.create_window(550, 80, window=mapB1)
 canvas.create_window(960, 80, window=mapB2)
 canvas.create_window(1370, 80, window=mapB3)
 
-#cranks
+#cranks and shoot
 crankE = canvas.create_window(1800, 600, window=knobE)
 crankA = canvas.create_window(1700, 800, window=knobA)
+canvas.create_window(1000, 900, window=shootB)
+
 #directives
 directivesBoxWindow = canvas.create_window(450, 550, window=directivesBox)
 
