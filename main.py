@@ -13,11 +13,39 @@ global directivesLn
 directivesLn = -1
 global lines
 global mapOffset
-mapOffset = (960, 575)
+mapOffset = (960, 650)
+
+global azRad
+global elRad
+azRad = 0
+elRad = 0
+global muzzleVelocity
+muzzleVelocity = 50
+global gravity
+gravity = 10
 
 
 
-
+class projectile:
+    def __init__(self):
+        groundSpeed = muzzleVelocity * m.cos(elRad)
+        self.vz = muzzleVelocity * m.sin(elRad)
+        self.vx = groundSpeed * m.sin(azRad)
+        self.vy = groundSpeed * m.cos(azRad)
+        self.x = 630
+        self.y = 600
+        self.z = 0
+        self.tick()
+    def tick(self):
+        self.x = self.x + self.vx
+        self.y = self.y + self.vy
+        self.z = self.z + self.vz
+        self.vz = self.vz - gravity
+        if self.z > 0:
+            root.after(1000, self.tick)
+        else:
+            recon(int(self.x), int(self.y), 10)
+        print(self.z)
 
 def labelledBox(x, y, w, h, fill, stroke, text, tag):
     canvas.create_rectangle(x-w/2, y-h/2, x+w/2, y+h/2, fill=fill, tags=tag)
@@ -82,6 +110,14 @@ def menuloop():
         canvas.create_polygon(rotatePolygon((knobE.get()/-10),gunPoints, 1600, 300), fill="grey", tags="gun")#rotating barrel/chamber
         canvas.create_polygon(((0,800),(0,1000),(1920,1000),(1920,800),(1920,500),(1700,500),(1500,800)), fill="grey38", tags="gun")#elevation mechanism mount
         canvas.create_oval(1560,260, 1640,340, fill="grey30", tags="gun", outline="grey30")#circle
+
+        if knobE:
+            global elRad
+            elRad = m.radians(knobE.get())
+        if knobA:
+            global azRad
+            azRad = m.radians(knobA.get())
+
     prevScr = screen
     root.after(10, menuloop)
 
@@ -97,8 +133,8 @@ def rotatePolygon(angleDeg, points, offx, offy):#func to rotate a liste of point
 
 
 def recon(ix, iy, dir):
-    ix = ix - 210
-    iy = iy-210
+    ix = ix
+    iy = iy
     global map_1
 
     section = fullMap.convert("RGBA")
@@ -125,7 +161,7 @@ def testClick(event):
         recon(event.x, event.y, random.randint(-90,90))
 
 def shoot():
-    pass
+    projectile()
 
 
 
@@ -211,7 +247,7 @@ canvas.create_window(1370, 80, window=mapB3)
 #cranks and shoot
 crankE = canvas.create_window(1800, 600, window=knobE)
 crankA = canvas.create_window(1700, 800, window=knobA)
-canvas.create_window(1000, 900, window=shootB)
+canvas.create_window(1300, 900, window=shootB)
 
 #directives
 directivesBoxWindow = canvas.create_window(450, 550, window=directivesBox)
@@ -224,7 +260,7 @@ with open("directives.txt", "r", encoding="utf-8") as file:
 
 nextMission()
 
-
+recon(630, 600, 1)
 #loops or sum
 menuloop()
 root.mainloop()
