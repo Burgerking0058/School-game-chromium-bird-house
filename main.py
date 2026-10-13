@@ -36,16 +36,20 @@ class projectile:
         self.y = 600
         self.z = 0
         self.tick()
+        print(elRad, azRad)
+        print(self.vz, self.vx, self.vy)
     def tick(self):
         self.x = self.x + self.vx
-        self.y = self.y + self.vy
+        self.y = self.y - self.vy
         self.z = self.z + self.vz
         self.vz = self.vz - gravity
         if self.z > 0:
             root.after(1000, self.tick)
         else:
-            recon(int(self.x), int(self.y), 10)
-        print(self.z)
+            
+            fullMap.paste(impact1, (int(self.x)+160, int(self.y)+150), mask=impact1)
+            root.after(500, recon(int(self.x), int(self.y), 10))
+        
 
 def labelledBox(x, y, w, h, fill, stroke, text, tag):
     canvas.create_rectangle(x-w/2, y-h/2, x+w/2, y+h/2, fill=fill, tags=tag)
@@ -113,10 +117,10 @@ def menuloop():
 
         if knobE:
             global elRad
-            elRad = m.radians(knobE.get())
+            elRad = m.radians(knobE.get()/10)
         if knobA:
             global azRad
-            azRad = m.radians(knobA.get())
+            azRad = m.radians(knobA.get()/10)
 
     prevScr = screen
     root.after(10, menuloop)
@@ -214,7 +218,7 @@ def updateDial(dial, text):
 
 
 #images
-fullMap = Image.open("map1 (2).png")
+fullMap = Image.open("greyscalemap.png")
 #map_1 = ImageTk.PhotoImage(fullMap)
 
 
@@ -224,6 +228,10 @@ pixel = tk.PhotoImage(width=1, height=1)#invisible pixel for button sizing i gue
 blankMap = Image.new("RGBA", (1920, 1080), color=(0,0,0,0))
 
 map_1 = ImageTk.PhotoImage(blankMap)
+
+impact1 = Image.open("smallimpact.png")
+impact1 = impact1.convert("RGBA")
+
 
 #buttons for screen change
 mapB1 = tk.Button(root, text="Map", width=300, height=140, image=pixel,compound="left", command=bone, font=("arial", 40, "bold"))
