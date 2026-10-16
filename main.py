@@ -20,7 +20,7 @@ global elRad
 azRad = 0
 elRad = 0
 global muzzleVelocity
-muzzleVelocity = 50
+muzzleVelocity = 100
 global gravity
 gravity = 10
 
@@ -34,7 +34,7 @@ class projectile:
         self.vy = groundSpeed * m.cos(azRad)
         self.x = 630
         self.y = 600
-        self.z = 0
+        self.z = 10
         self.tick()
         print(elRad, azRad)
         print(self.vz, self.vx, self.vy)
