@@ -12,13 +12,7 @@ def rotatePolygon(angleDeg, points, offx, offy):#func to rotate a liste of point
     sin = m.sin(dirRad)
     for i in range(len(points2)):
         points2[i][0], points2[i][1] = int(points2[i][0]*cos - points2[i][1]*sin+offx), int(points2[i][0]*sin + points2[i][1]*cos+offy)
-        
     return(points2)
-
-def testClick(event):
-    print(f"{event.x}, {event.y}")
-    if game.screen == 1:
-        game.recon(event.x, event.y, random.randint(-90,90))
 
 def updateDial(dial, text):
     dial.configure(text=text)
@@ -45,13 +39,13 @@ class projectile:
             self.master.root.after(10, self.tick)
         else:#else impact
             if self.master.projectiles[self.round][1] == 1:
-                            self.master.fullMap.paste(self.master.impact2, (int(self.x)+180, int(self.y)+180), mask=self.master.impact2.split()[3])
+                            self.master.fullMap.paste(self.master.impact2, (int(self.x)+180, int(self.y)+180), mask=self.master.impact2.split()[3])#small impact crater
             elif self.master.projectiles[self.round][1] == 2:
-                self.master.fullMap.paste(self.master.impact1, (int(self.x)+180, int(self.y)+180), mask=self.master.impact1.split()[3])
+                self.master.fullMap.paste(self.master.impact1, (int(self.x)+180, int(self.y)+180), mask=self.master.impact1.split()[3])#big impact crater
             elif self.master.projectiles[self.round][1] == 3:
-                self.master.fullMap.paste(self.master.impact3, (int(self.x)+150, int(self.y)+150), mask=self.master.impact3.split()[3])
+                self.master.fullMap.paste(self.master.impact3, (int(self.x)+150, int(self.y)+150), mask=self.master.impact3.split()[3])#smoke
 
-            self.master.root.after(500, self.master.recon(int(self.x), int(self.y), random.randint(0, 180)))
+            self.master.root.after(500, self.master.recon(int(self.x), int(self.y), random.randint(0, 180)))#recon over shot
 
 
 
@@ -60,16 +54,15 @@ class gameC:
     def __init__(self):
     
         #starting variables
-        self.impact1 = 0
-        self.screen = 1
-        self.prevScr = 0
-        self.directivesLn = -1
+        self.screen = 1#page
+        self.prevScr = 0#last page
+        self.directivesLn = -1#line that is read from directives.txt
         self.mapOffset = (960, 650)
-        self.azRad = 0
+        self.azRad = 0#azimuth and elevation starting to not give a hissy fit
         self.elRad = 0
-        self.loaded = 0
-        self.select = 1
-        self.projectiles = (("AP", 1, "grey"), ("HE", 2, "RED"), ("WP", 3, "white"), ("CH", 3, "green"))
+        self.loaded = 0#shell loaded
+        self.select = 1#shell type ready to be loaded
+        self.projectiles = (("Armour Piercing", 1, "grey"), ("High Explosive", 2, "RED"), ("White Phosphorous Smoke", 3, "white"), ("Chlorine Gas", 3, "green"))
         #making screen
         self.root = tk.Tk() #root window i think
         self.root.title("iron nest ripoff")#title
@@ -83,7 +76,7 @@ class gameC:
         self.pixel = tk.PhotoImage(width=1, height=1)#invisible pixel for button sizing i guess
             #map displays
         self.blankMap = Image.new("RGBA", (1920, 1080), color=(0,0,0,0))
-        self.brightness = ImageEnhance.Brightness(self.fullMap)
+        self.brightness = ImageEnhance.Brightness(self.fullMap)#makes background darker
         self.blankMap.paste(self.brightness.enhance(0.2), (0,0))
 
 
@@ -129,30 +122,25 @@ class gameC:
         with open("directives.txt", "r", encoding="utf-8") as file:
             self.lines = file.readlines()
 
-        self.nextMission()
+        self.nextMission()#plays directives at start
 
         self.recon(630, 600, 1)#shows gun position
         #loops or sum
         self.menuloop()#starts menu loop
         self.root.mainloop()#starts entire everything I think
 
-    def mouseX(self):
-        # 1. Get absolute screen coordinates
+    def mouseX(self):#mouse x position relative to screen
         screen_x = self.root.winfo_pointerx()
-        
-        
-        # 2. Subtract window position to get coordinates relative to the window
         win_x = screen_x - self.root.winfo_rootx()
-        
         return(win_x)
     
-    def mouseY(self):
+    def mouseY(self):#mouse y position relative to window
         screen_y = self.root.winfo_pointery()
         win_y = screen_y - self.root.winfo_rooty()
         return(win_y)
 
 
-    def nextMission(self):#plays next set of directives I think(haven't properly tested this yet)
+    def nextMission(self):#plays next set of directives
         self.directivesLn +=1
         self.directivesBox.insert("end", "---------------------------------------------------------------------\n")
         while(self.lines[self.directivesLn].strip()):
@@ -160,7 +148,7 @@ class gameC:
             self.directivesLn += 1
 
     def menuloop(self):
-        self.canvas.delete("gun")
+        self.canvas.delete("gun")#removes drawn stuff(i probably could have gotten away with one tag)
         self.canvas.delete("shell")
         self.canvas.delete("indicator")
         if self.loaded >= 1:
@@ -182,9 +170,9 @@ class gameC:
                 self.canvas.itemconfigure(self.shootBC, state="hidden")
                 self.canvas.itemconfigure(self.ramBC, state="hidden")
 
-            mx, my = self.mouseX(), self.mouseY()
+            mx, my = self.mouseX(), self.mouseY()# draw indicator
             self.canvas.create_line(830, 900, mx,my, tags="indicator", fill="white")
-            self.canvas.create_text(mx, my-30, text=f"{round(m.degrees(m.atan2(my-900, mx-830)+m.pi/2)*10)/10}°, {round(m.dist((mx, my), (830, 900)))}m", tags="indicator", fill="white")
+            self.canvas.create_text(mx, my-30, text=f"{round(m.degrees(m.atan2(my-900, mx-830)+m.pi/2)*10)/10}°, {round(m.dist((mx, my), (830, 900)))}m", tags="indicator", fill="white")#text for bearing / range
         elif self.screen == 2:
             if not self.prevScr == 2:#page 2 init
                 self.canvas.delete("map")
@@ -222,22 +210,18 @@ class gameC:
             self.canvas.create_polygon(((0,800),(0,1000),(1920,1000),(1920,800),(1920,500),(1700,500),(1500,800)), fill="grey38", tags="gun")#elevation mechanism mount
             self.canvas.create_oval(1560,260, 1640,340, fill="grey30", tags="gun", outline="grey30")#circle
             #shell
-            if not self.loaded:
+            if not self.loaded:#update ammo selector
                 self.canvas.create_rectangle(800, 250, 1100, 350, fill=self.projectiles[self.select][2], tags="shell")
                 updateDial(self.knobG, self.projectiles[self.select][0])
-
-
-            if self.knobE:
+            if self.knobE:#read knobs
                 self.elRad = m.radians(self.knobE.get()/10)
             if self.knobA:
                 self.azRad = m.radians(self.knobA.get()/10)
             if self.knobG:
                 self.select = self.knobG.get()
         
-
-
-        self.prevScr = self.screen
-        self.root.after(10, self.menuloop)
+        self.prevScr = self.screen#makes sure things that only need to happen once only happen once
+        self.root.after(10, self.menuloop)#loops game screen
 
     def recon(self, ix, iy, dir):
         section = self.fullMap.convert("RGBA")
@@ -258,7 +242,7 @@ class gameC:
     def shoot(self):
         if self.loaded >= 1:
             projectile(self, self.loaded-10) #un offsets and shoots projectile
-            self.loaded = 0
+            self.loaded = 0 #removes shell from barrel
     def ram(self):
         if not self.loaded:
             self.loaded = self.select+10#offsets it to not be 0 for statements
@@ -271,44 +255,4 @@ class gameC:
     def bthree(self):
         self.screen = 3
 
-    
-
-
-
 game = gameC()#makes game
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-arrows to switch tabs
-def larrow(self):
-    game.screen
-    if game.screen >=2:
-        game.screen -=1
-def rarrow(self):
-    game.screen
-    if game.screen <=2:
-        game.screen +=1
-#close the program with esc
-def kill(self):
-    game.root.destroy()
-#keybinds
-game.root.bind("<Escape>", kill)
-game.root.bind("<Left>", larrow)
-game.root.bind("<Right>", rarrow)
-
-game.canvas.bind("<Button-1>", testClick)
-"""
