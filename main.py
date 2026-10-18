@@ -23,7 +23,6 @@ def testClick(event):
 def updateDial(dial, text):
     dial.configure(text=text)
 
-
 class projectile:
     def __init__(self, master, round):
         self.master = master #so i can use variables from game
@@ -53,11 +52,6 @@ class projectile:
                 self.master.fullMap.paste(self.master.impact3, (int(self.x)+150, int(self.y)+150), mask=self.master.impact3.split()[3])
 
             self.master.root.after(500, self.master.recon(int(self.x), int(self.y), random.randint(0, 180)))
-        
-
-
-
-
 
 
 
@@ -65,83 +59,97 @@ class gameC:
 
     def __init__(self):
     
-            #starting variables
-            self.impact1 = 0
-            self.screen = 1
-            self.prevScr = 0
-            self.directivesLn = -1
-            self.mapOffset = (960, 650)
-            self.azRad = 0
-            self.elRad = 0
-            self.loaded = 0
-            self.select = 1
-            self.projectiles = (("AP", 1, "grey"), ("HE", 2, "RED"), ("WP", 3, "white"), ("CH", 3, "green"))
-            #making screen
-            self.root = tk.Tk() #root window i think
-            self.root.title("iron nest ripoff")#title
-            self.root.geometry("1920x1080+0+0")
-            #making canvas
-            self.canvas = tk.Canvas(self.root, width=1920, height=1080, bg="black")
-            self.canvas.pack()
-    
-            #images
-            self.fullMap = Image.open("greyscalemap.png")
-            self.pixel = tk.PhotoImage(width=1, height=1)#invisible pixel for button sizing i guess
-                #map displays
-            self.blankMap = Image.new("RGBA", (1920, 1080), color=(0,0,0,0))
-            self.brightness = ImageEnhance.Brightness(self.fullMap)
-            self.blankMap.paste(self.brightness.enhance(0.2), (0,0))
+        #starting variables
+        self.impact1 = 0
+        self.screen = 1
+        self.prevScr = 0
+        self.directivesLn = -1
+        self.mapOffset = (960, 650)
+        self.azRad = 0
+        self.elRad = 0
+        self.loaded = 0
+        self.select = 1
+        self.projectiles = (("AP", 1, "grey"), ("HE", 2, "RED"), ("WP", 3, "white"), ("CH", 3, "green"))
+        #making screen
+        self.root = tk.Tk() #root window i think
+        self.root.title("iron nest ripoff")#title
+        self.root.geometry("1920x1080+0+0")
+        #making canvas
+        self.canvas = tk.Canvas(self.root, width=1920, height=1080, bg="black")
+        self.canvas.pack()
+
+        #images
+        self.fullMap = Image.open("greyscalemap.png")
+        self.pixel = tk.PhotoImage(width=1, height=1)#invisible pixel for button sizing i guess
+            #map displays
+        self.blankMap = Image.new("RGBA", (1920, 1080), color=(0,0,0,0))
+        self.brightness = ImageEnhance.Brightness(self.fullMap)
+        self.blankMap.paste(self.brightness.enhance(0.2), (0,0))
 
 
-            self.map_1 = ImageTk.PhotoImage(self.blankMap)
-                #craters
-            self.impact1 = Image.open("smallishimpact.png")
-            self.impact2 = Image.open("smallimpact2.png")
-            self.impact3 = Image.open("smoke.png")
-    
-            #buttons for screen change
-            self.mapB1 = tk.Button(self.root, text="Map", width=300, height=140, image=self.pixel,compound="left", command=self.bone, font=("arial", 40, "bold"))
-            self.mapB2 = tk.Button(self.root, text="Directives", width=300, height=140, image=self.pixel,compound="left", command=self.btwo, font=("arial", 40, "bold"))
-            self.mapB3 = tk.Button(self.root, text="Breach", width=300, height=140, image=self.pixel,compound="left", command=self.bthree, font=("arial", 40, "bold"))
-            #other ones
-            self.directivesBox = tk.Text(self.root, width=70, height=50)
-            self.shootB = tk.Button(self.root, text="Fire", width=300, height=140, image=self.pixel,compound="left", command=self.shoot, bg="red", font=("arial", 40, "bold"))
-            self.ramB = tk.Button(self.root, text="Ram", width=300, height=140, image=self.pixel,compound="left", command=self.ram, bg="red", font=("arial", 40, "bold"))
-    
-    
-            #cranks for elevation / azimuth
-            self.knobE = ImageKnob(self.root, image="handle.png", text_color="white",end=600, text="Elevation ", bg="grey38", start_angle=0,scale_width=70, end_angle=-7200, scroll_steps=1, radius=200, command=lambda: updateDial(self.knobE, f"Elevation: {self.knobE.get()/10}°"))
-            self.knobA = ImageKnob(self.root, image="handle.png", text_color="white",start=-600, end=600, text="Azimuth ", bg="grey38", start_angle=18000,scale_width=70, end_angle=-18000, scroll_steps=1, radius=200, command=lambda: updateDial(self.knobA, f"Azimuth: {self.knobA.get()/10}°"))
-            self.knobA.set(0)
-            #ammo selector
-            self.knobG = ImageKnob(self.root, image="handle.png", text_color="white",start=0, end=3, text=self.projectiles[self.select][0], bg="black", start_angle=18,scale_width=70, end_angle=-180, scroll_steps=1, radius=200)
+        self.map_1 = ImageTk.PhotoImage(self.blankMap)
+            #craters
+        self.impact1 = Image.open("smallishimpact.png")
+        self.impact2 = Image.open("smallimpact2.png")
+        self.impact3 = Image.open("smoke.png")
+
+        #buttons for screen change
+        self.mapB1 = tk.Button(self.root, text="Map", width=300, height=140, image=self.pixel,compound="left", command=self.bone, font=("arial", 40, "bold"))
+        self.mapB2 = tk.Button(self.root, text="Directives", width=300, height=140, image=self.pixel,compound="left", command=self.btwo, font=("arial", 40, "bold"))
+        self.mapB3 = tk.Button(self.root, text="Breach", width=300, height=140, image=self.pixel,compound="left", command=self.bthree, font=("arial", 40, "bold"))
+        #other ones
+        self.directivesBox = tk.Text(self.root, width=70, height=50)
+        self.shootB = tk.Button(self.root, text="Fire", width=300, height=140, image=self.pixel,compound="left", command=self.shoot, bg="red", font=("arial", 40, "bold"))
+        self.ramB = tk.Button(self.root, text="Ram", width=300, height=140, image=self.pixel,compound="left", command=self.ram, bg="red", font=("arial", 40, "bold"))
 
 
-    
-            #summoning screen change buttons at start on canvas
-            self.canvas.create_window(550, 80, window=self.mapB1)
-            self.canvas.create_window(960, 80, window=self.mapB2)
-            self.canvas.create_window(1370, 80, window=self.mapB3)
-    
-            #cranks and shoot
-            self.crankE = self.canvas.create_window(1800, 600, window=self.knobE)
-            self.crankA = self.canvas.create_window(1700, 800, window=self.knobA)
-            self.shootBC =self.canvas.create_window(1300, 900, window=self.shootB)
-            self.ramBC = self.canvas.create_window(800, 900, window=self.ramB)
-            self.crankG = self.canvas.create_window(900, 600, window=self.knobG)
-    
-            #directives
-            self.directivesBoxWindow = self.canvas.create_window(450, 550, window=self.directivesBox) #reading directives text file
-            with open("directives.txt", "r", encoding="utf-8") as file:
-                self.lines = file.readlines()
-    
-            self.nextMission()
-    
-            self.recon(630, 600, 1)#shows gun position
-            #loops or sum
-            self.menuloop()#starts menu loop
-            self.root.mainloop()#starts entire everything I think
+        #cranks for elevation / azimuth
+        self.knobE = ImageKnob(self.root, image="handle.png", text_color="white",end=600, text="Elevation ", bg="grey38", start_angle=0,scale_width=70, end_angle=-7200, scroll_steps=1, radius=200, command=lambda: updateDial(self.knobE, f"Elevation: {self.knobE.get()/10}°"))
+        self.knobA = ImageKnob(self.root, image="handle.png", text_color="white",start=-600, end=600, text="Azimuth ", bg="grey38", start_angle=18000,scale_width=70, end_angle=-18000, scroll_steps=1, radius=200, command=lambda: updateDial(self.knobA, f"Azimuth: {self.knobA.get()/10}°"))
+        self.knobA.set(0)
+        #ammo selector
+        self.knobG = ImageKnob(self.root, image="handle.png", text_color="white",start=0, end=3, text=self.projectiles[self.select][0], bg="black", start_angle=18,scale_width=70, end_angle=-180, scroll_steps=1, radius=200)
 
+
+
+        #summoning screen change buttons at start on canvas
+        self.canvas.create_window(550, 80, window=self.mapB1)
+        self.canvas.create_window(960, 80, window=self.mapB2)
+        self.canvas.create_window(1370, 80, window=self.mapB3)
+
+        #cranks and shoot
+        self.crankE = self.canvas.create_window(1800, 600, window=self.knobE)
+        self.crankA = self.canvas.create_window(1700, 800, window=self.knobA)
+        self.shootBC =self.canvas.create_window(1300, 900, window=self.shootB)
+        self.ramBC = self.canvas.create_window(800, 900, window=self.ramB)
+        self.crankG = self.canvas.create_window(900, 600, window=self.knobG)
+
+        #directives
+        self.directivesBoxWindow = self.canvas.create_window(450, 550, window=self.directivesBox) #reading directives text file
+        with open("directives.txt", "r", encoding="utf-8") as file:
+            self.lines = file.readlines()
+
+        self.nextMission()
+
+        self.recon(630, 600, 1)#shows gun position
+        #loops or sum
+        self.menuloop()#starts menu loop
+        self.root.mainloop()#starts entire everything I think
+
+    def mouseX(self):
+        # 1. Get absolute screen coordinates
+        screen_x = self.root.winfo_pointerx()
+        
+        
+        # 2. Subtract window position to get coordinates relative to the window
+        win_x = screen_x - self.root.winfo_rootx()
+        
+        return(win_x)
+    
+    def mouseY(self):
+        screen_y = self.root.winfo_pointery()
+        win_y = screen_y - self.root.winfo_rooty()
+        return(win_y)
 
 
     def nextMission(self):#plays next set of directives I think(haven't properly tested this yet)
@@ -154,6 +162,7 @@ class gameC:
     def menuloop(self):
         self.canvas.delete("gun")
         self.canvas.delete("shell")
+        self.canvas.delete("indicator")
         if self.loaded >= 1:
             self.shootB.config(bg="red")
         else:
@@ -173,6 +182,9 @@ class gameC:
                 self.canvas.itemconfigure(self.shootBC, state="hidden")
                 self.canvas.itemconfigure(self.ramBC, state="hidden")
 
+            mx, my = self.mouseX(), self.mouseY()
+            self.canvas.create_line(830, 900, mx,my, tags="indicator", fill="white")
+            self.canvas.create_text(mx, my-30, text=f"{round(m.degrees(m.atan2(my-900, mx-830)+m.pi/2)*10)/10}°, {round(m.dist((mx, my), (830, 900)))}m", tags="indicator", fill="white")
         elif self.screen == 2:
             if not self.prevScr == 2:#page 2 init
                 self.canvas.delete("map")
